@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/common/components/button.dart';
 import 'package:flutter_ecommerce_app/common/components/custom_text_field.dart';
 import 'package:flutter_ecommerce_app/common/components/spaces.dart';
-import 'package:flutter_ecommerce_app/data/models/requests/register_request_model.dart';
-import 'package:flutter_ecommerce_app/presentation/auth/bloc/register/register_bloc.dart';
-import 'package:flutter_ecommerce_app/presentation/auth/signin_screen.dart';
 
 import '../../common/constants/colors.dart';
 import '../../common/constants/images.dart';
@@ -92,62 +88,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             obsecureText: true,
           ),
           const SpaceHeight(height: 24),
-          BlocConsumer<RegisterBloc, RegisterState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                orElse: () {},
-                success: (data) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SigninScreen(),
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Register Successfull",
-                        style: TextStyle(color: ColorName.dark),
-                      ),
-                      backgroundColor: ColorName.lightBlue,
-                    ),
-                  );
-                },
-                error: (message) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(message),
-                      backgroundColor: ColorName.red,
-                    ),
-                  );
-                },
-              );
+          Button.filled(
+            onPressed: () {
+              Navigator.pop(context);
             },
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return Button.filled(
-                    onPressed: () {
-                      final data = RegisterRequestModel(
-                        email: emailController.text,
-                        name: nameController.text,
-                        password: passwordController.text,
-                        username: nameController.text.replaceAll(" ", ""),
-                      );
-                      context
-                          .read<RegisterBloc>()
-                          .add(RegisterEvent.register(data));
-                    },
-                    label: "Register",
-                  );
-                },
-                loading: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              );
-            },
+            label: 'Daftar',
           ),
           const SpaceHeight(height: 60),
           Center(
