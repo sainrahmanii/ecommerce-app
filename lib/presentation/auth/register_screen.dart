@@ -4,11 +4,11 @@ import 'package:flutter_ecommerce_app/common/components/button.dart';
 import 'package:flutter_ecommerce_app/common/components/custom_text_field.dart';
 import 'package:flutter_ecommerce_app/common/components/spaces.dart';
 import 'package:flutter_ecommerce_app/data/models/requests/register_request_model.dart';
-import 'package:flutter_ecommerce_app/presentation/auth/bloc/register/register_bloc.dart';
 import 'package:flutter_ecommerce_app/presentation/auth/signin_screen.dart';
 
 import '../../common/constants/colors.dart';
 import '../../common/constants/images.dart';
+import 'bloc/register/register_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -105,11 +105,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                        "Register Successfull",
-                        style: TextStyle(color: ColorName.dark),
-                      ),
-                      backgroundColor: ColorName.lightBlue,
+                      content: Text("Register Successfull !"),
+                      backgroundColor: ColorName.green,
                     ),
                   );
                 },
@@ -138,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           .read<RegisterBloc>()
                           .add(RegisterEvent.register(data));
                     },
-                    label: "Register",
+                    label: 'Register',
                   );
                 },
                 loading: () {
