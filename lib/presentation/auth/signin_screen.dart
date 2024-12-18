@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecommerce_app/common/components/button.dart';
 import 'package:flutter_ecommerce_app/common/components/custom_text_field.dart';
+import 'package:flutter_ecommerce_app/data/models/requests/login_request_model.dart';
+import 'package:flutter_ecommerce_app/presentation/auth/bloc/login/login_bloc.dart';
 import 'package:flutter_ecommerce_app/presentation/auth/register_screen.dart';
 import 'package:flutter_ecommerce_app/presentation/home/dashboard_screen.dart';
 
@@ -16,12 +19,12 @@ class SigninScreen extends StatefulWidget {
 }
 
 class _SigninScreenState extends State<SigninScreen> {
-  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -65,8 +68,8 @@ class _SigninScreenState extends State<SigninScreen> {
           ),
           const SpaceHeight(height: 40),
           CustomTextField(
-            controller: usernameController,
-            label: "Username",
+            controller: emailController,
+            label: "Email",
           ),
           const SpaceHeight(height: 12),
           CustomTextField(
@@ -75,16 +78,50 @@ class _SigninScreenState extends State<SigninScreen> {
             obsecureText: true,
           ),
           const SpaceHeight(height: 24),
-          Button.filled(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const DashboardScreen(),
-                ),
+          BlocConsumer<LoginBloc, LoginState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                orElse: () {},
+                success: (data) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(),
+                    ),
+                  );
+                },
+                error: (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(error),
+                      backgroundColor: ColorName.red,
+                    ),
+                  );
+                },
               );
             },
-            label: "Sign In",
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return Button.filled(
+                    onPressed: () {
+                      final data = LoginRequestModel(
+                        identifier: emailController.text,
+                        password: passwordController.text,
+                      );
+
+                      context.read<LoginBloc>().add(LoginEvent.login(data));
+                    },
+                    label: "Sign In",
+                  );
+                },
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              );
+            },
           ),
           const SpaceHeight(height: 122),
           Center(
